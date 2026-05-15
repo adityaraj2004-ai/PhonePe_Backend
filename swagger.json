@@ -1,0 +1,31 @@
+{
+  "swagger": "2.0",
+
+  "info": {
+    "version": "1.0.0",
+    "title": "PhonePe Backend API",
+    "description": "API documentation for the PhonePe Backend application."
+  },
+
+  "host": "localhost:8000",
+
+  "basePath": "/",
+
+  "schemes": ["http"],
+
+  "paths": {
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Welcome To PhonePe Backend"
+          },
+
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  }
+}
