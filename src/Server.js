@@ -5,12 +5,13 @@ import connectDB from "./Database/DB.js"
 import app from "./App.js"
 
 
-
+const SwaggerUi = "http://localhost:8000/api-docs"
 const startServer = async () => {
     try {
         await connectDB();
         app.listen(process.env.PORT, () => {
             console.log(`Server has Started at PORT = ${process.env.PORT}`)
+            console.log(`Swagger UI is available on ${SwaggerUi}`)
         })
     } catch (error) {
         console.error("Error in starting the Server", error.message);

@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import authRouter from "./Routes/user.routes.js";
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({limit: "16kb", extended: true}));
 app.use(express.static("public"));
 app.use(express.json({limit: "16kb"}));
+
+// Version 1 of authenticaton routes 
+app.use("/api/v1/auth", authRouter)
 
 app.get("/", (req,res)=> {
     res.send("Server is running")
