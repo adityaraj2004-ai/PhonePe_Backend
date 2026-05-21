@@ -5,4 +5,4 @@ class ApiResponse {
         this.data = data;
     }
 }
-exprot {ApiResponse}
+export {ApiResponse}

@@ -1,4 +1,4 @@
-class ApiResponse extends Errors{
+class ErrorResponse extends Errors{
     constructor(
         statusCode,
         message,
@@ -11,4 +11,4 @@ class ApiResponse extends Errors{
         this.stack = stack;
     }
 }
-export {ApiResponse}
+export {ErrorResponse}
