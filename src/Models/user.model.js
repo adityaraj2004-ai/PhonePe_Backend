@@ -43,7 +43,12 @@ const userSchema = new mongoose.Schema({
         required: true,
         select: false,
         maxlength: 4,
+    },
+    refreshToken: {
+        type: String,
+        required: true
     }
+
 
 }, { timestamps: true, })
 
