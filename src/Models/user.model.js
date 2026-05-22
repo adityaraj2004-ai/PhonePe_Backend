@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { asyncHandler } from "../Utils/asyncHandler.js";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -44,10 +45,10 @@ const userSchema = new mongoose.Schema({
         select: false,
         maxlength: 4,
     },
-  refreshToken: {
-    type: String,
-    select: false
-}
+    refreshToken: {
+        type: String,
+        select: false
+    }
 
 
 }, { timestamps: true, })
