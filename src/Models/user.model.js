@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre("save", async function (next) {
     if (this.isModified("password")) this.password = await bcrypt.hash(this.password, 10);
     if (this.isModified("mpin")) this.mpin = await bcrypt.hash(this.mpin, 10);
-    next()
+    next
 })
 
 userSchema.methods.comparePasswords = async function (password) {
@@ -82,3 +82,12 @@ userSchema.methods.generateRefreshToken = function () {
 
 const User = mongoose.model("User", userSchema)
 export default User;
+
+
+// {
+//   "name": "adi",
+//   "email": "adi@gmail.com",
+//   "password": "123456",
+//   "phoneNumber": "9999999999",
+//   "mpin": "1234"
+// }

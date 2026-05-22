@@ -12,6 +12,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
         await user.save({ validateBeforeSave: false });
         return { accessToken, refreshToken }
     } catch (error) {
+        console.error(error.message)
         throw new ErrorResponse(500, "Error generating tokens")
     }
 }
@@ -65,7 +66,12 @@ export const registerUser = asyncHandler(async (req, res) => {
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
         .json(
-            new ApiResponse(201, "User Registered Successfully", createdUser)
+            new ApiResponse(201, "User Registered Successfully",
+                {
+                    user: createdUser,
+                    accessToken,
+                    refreshToken
+                })
         )
 
 
@@ -76,7 +82,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     let { email, password } = req.body;
 
-    name = name.toLowerCase();
+  
     email = email.toLowerCase();
     if (
         [email, password].some(
@@ -135,7 +141,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 });
 
 
-export const logoutUser = asyncHandler(async (req,res) => {
+export const logoutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(req.user._id, {
         $unset: {
             refreshToken: 1

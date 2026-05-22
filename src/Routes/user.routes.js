@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, registerUser } from "../Controllers/user.controller.js";
+import { loginUser, logoutUser, registerUser } from "../Controllers/user.controller.js";
 
 
 
@@ -7,7 +7,7 @@ const authRouter = Router();
 
 authRouter.post("/signup", registerUser)
 authRouter.post("/login", loginUser)
-// authRouter.post("/logout", )
+// authRouter.post("/logout", ,logoutUser )
 
 
 export default authRouter
