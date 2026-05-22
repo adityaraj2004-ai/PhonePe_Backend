@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
@@ -44,10 +44,10 @@ const userSchema = new mongoose.Schema({
         select: false,
         maxlength: 4,
     },
-    refreshToken: {
-        type: String,
-        required: true
-    }
+  refreshToken: {
+    type: String,
+    select: false
+}
 
 
 }, { timestamps: true, })
@@ -79,4 +79,5 @@ userSchema.methods.generateRefreshToken = function () {
     }, process.env.Refresh_Token_Secret, { expiresIn: process.env.Refresh_Token_Expiry })
 }
 
-export default User = mongoose.model("User", userSchema)
+const User = mongoose.model("User", userSchema)
+export default User;

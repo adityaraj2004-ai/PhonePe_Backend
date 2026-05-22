@@ -1,4 +1,4 @@
-class ErrorResponse extends Errors{
+class ErrorResponse extends Error{
     constructor(
         statusCode,
         message,
