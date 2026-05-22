@@ -4,17 +4,21 @@ import User from "../Models/user.model.js"
 import { ApiResponse } from "../Utils/apiResponse.js";
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
-    const user = await User.findById(userId);
-    const accessToken = await user.generateAccessToken();
-    const refreshToken = await user.generateRefreshToken();
-    user.refreshToken = refreshToken;
-    user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken }
+    try {
+        const user = await User.findById(userId);
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
+        return { accessToken, refreshToken }
+    } catch (error) {
+        throw new ErrorResponse(500, "Error generating tokens")
+    }
 }
 
 
 export const registerUser = asyncHandler(async (req, res) => {
-    let { name, email, password, mpin } = req.body;
+    let { name, email, password, phoneNumber, mpin } = req.body;
 
     name = name.toLowerCase();
     email = email.toLowerCase();
@@ -25,27 +29,44 @@ export const registerUser = asyncHandler(async (req, res) => {
     }
 
     const existingUser = await User.findOne({
-        $or: [{ name }, { email }]
+        $or: [{ phoneNumber }, { email }]
     })
 
     if (existingUser) {
         throw new ErrorResponse(409, "User already exists")
     }
 
+
+    const upiID = `${email.split('@')[0]}${Date.now()}@phonepe`
+
     const user = await User.create({
         email,
         name,
         mpin,
-        password
+        password,
+        phoneNumber,
+        upiID: upiID
     })
     const createdUser = await User.findById(user._id).select("-password -mpin")
 
     if (!createdUser) {
         throw new ErrorResponse(500, "Something went wrong while registerign the user")
     }
-    return res.status(201).json(
-        new ApiResponse(201, "User Registered Successfully", createdUser)
-    )
+
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(createdUser._id);
+
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
+    }
+
+    return res.status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(201, "User Registered Successfully", createdUser)
+        )
 
 
 
@@ -53,8 +74,10 @@ export const registerUser = asyncHandler(async (req, res) => {
 })
 export const loginUser = asyncHandler(async (req, res) => {
 
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
+    name = name.toLowerCase();
+    email = email.toLowerCase();
     if (
         [email, password].some(
             (field) => !field || field.trim() === ""
@@ -91,7 +114,8 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
     };
 
     return res.status(200)
