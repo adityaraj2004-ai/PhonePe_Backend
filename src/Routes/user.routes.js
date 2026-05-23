@@ -4,7 +4,8 @@ import {
     getUserProfile,
     loginUser,
     logoutUser,
-    registerUser
+    registerUser,
+    setMpin
 } from "../Controllers/user.controller.js";
 import { verifyJWT } from "../Middlewares/auth.middleware.js";
 
@@ -20,6 +21,7 @@ authRouter.post("/changepw", verifyJWT, changePassword)
 const userRouter = Router();
 
 userRouter.get("/getProfile",verifyJWT ,getUserProfile)
+userRouter.post("/setmpin",verifyJWT ,setMpin)
 
 
 export { authRouter, userRouter };

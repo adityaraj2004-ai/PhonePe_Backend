@@ -41,9 +41,9 @@ const userSchema = new mongoose.Schema({
     },
     mpin: {
         type: String,
-       
+        minlength: 4,
         select: false,
-        maxlength: 4,
+
     },
     refreshToken: {
         type: String,
@@ -66,6 +66,14 @@ userSchema.methods.comparePasswords = async function (password) {
 userSchema.methods.compareMpins = async function (mpin) {
     return await bcrypt.compare(mpin, this.mpin)
 }
+
+userSchema.methods.hashMpin = async function (mpin) {
+    const hashedMpin = await bcrypt.hash(mpin, 10);
+
+    this.mpin = hashedMpin;
+
+    await this.save();
+};
 
 userSchema.methods.generateAccessToken = function () {
     return jwt.sign({

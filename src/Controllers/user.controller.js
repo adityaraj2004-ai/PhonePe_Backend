@@ -212,12 +212,36 @@ export const changePassword = asyncHandler(async (req, res) => {
 // ----------------------------------------------------------------------------------------
 
 export const getUserProfile = asyncHandler(async (req, res) => {
-   
+
     const user = req.user
     return res.status(200)
         .json(
-            new ApiResponse(200, "Current User Details" ,{ user: user })
+            new ApiResponse(200, "Current User Details", { user: user })
         )
 
 })
 
+export const setMpin = asyncHandler(async (req, res) => {
+    const { mpin } = req.body;
+    if (!mpin) {
+        throw new ErrorResponse(401, "Mpin is required")
+    }
+
+    if (mpin.length !== 4) {
+        throw new ErrorResponse(401, "Mpin must be minimum 4 digit")
+    }
+
+    const userId = req.user?._id
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ErrorResponse(401, "Invalid req by user")
+    }
+
+    await user.hashMpin(mpin);
+
+    return res.status(200)
+        .json(
+            new ApiResponse(200, "Mpin set Successfully")
+        )
+
+})
