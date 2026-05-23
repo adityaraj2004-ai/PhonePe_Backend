@@ -82,7 +82,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     let { email, password } = req.body;
 
-  
+
     email = email.toLowerCase();
     if (
         [email, password].some(
@@ -162,4 +162,39 @@ export const logoutUser = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(200, "User Succcessfully Logout")
         )
+})
+
+export const changePassword = asyncHandler(async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user?._id;
+
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+        throw new ErrorResponse(401, "Invalid User")
+    }
+    const checkPassword = await user.comparePasswords(oldPassword);
+
+    if (!checkPassword) {
+        throw new ErrorResponse(401, "Invalid Password")
+    }
+
+    user.refreshToken = undefined;
+    user.password = newPassword;
+    await user.save();
+
+
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
+    }
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(
+            new ApiResponse(200, "Password Changed Successfully")
+        )
+
 })
