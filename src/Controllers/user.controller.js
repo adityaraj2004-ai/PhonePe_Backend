@@ -19,13 +19,13 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 
 
 export const registerUser = asyncHandler(async (req, res) => {
-    let { name, email, password, phoneNumber, mpin } = req.body;
+    let { name, email, password, phoneNumber } = req.body;
 
     name = name.toLowerCase();
     email = email.toLowerCase();
 
 
-    if ([name, email, password, phoneNumber, mpin].some((field) => !field || field.trim() === "")) {
+    if ([name, email, password, phoneNumber].some((field) => !field || field.trim() === "")) {
         throw new ErrorResponse(400, "All fields are reqauired")
     }
 
@@ -43,17 +43,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         email,
         name,
-        mpin,
         password,
         phoneNumber,
         upiID: upiID
     })
-    const createdUser = await User.findById(user._id).select("-password -mpin")
+    const createdUser = await User.findById(user._id).select("-password")
 
     if (!createdUser) {
         throw new ErrorResponse(500, "Something went wrong while registerign the user")
     }
-
+    console.log("User Registered: ", createdUser)
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(createdUser._id);
 
     const options = {
@@ -78,6 +77,8 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 
 })
+
+
 export const loginUser = asyncHandler(async (req, res) => {
 
     let { email, password } = req.body;
@@ -198,3 +199,25 @@ export const changePassword = asyncHandler(async (req, res) => {
         )
 
 })
+
+// 1. refresh-token
+// 2. forgot-password
+// 3. reset-password
+// 4. verify-email/otp
+// 5. resend-otp
+// 6. rotate refresh token
+// 7. logout-all-devices
+
+
+// ----------------------------------------------------------------------------------------
+
+export const getUserProfile = asyncHandler(async (req, res) => {
+   
+    const user = req.user
+    return res.status(200)
+        .json(
+            new ApiResponse(200, "Current User Details" ,{ user: user })
+        )
+
+})
+

@@ -4,9 +4,10 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import authRouter from "./Routes/user.routes.js";
+import { authRouter, userRouter } from "./routes/user.routes.js";
 import swaggerUi from "swagger-ui-express" // first swagger import
 import swaggerDocument from "../swagger.json" with { type: "json" } //second swagger import
+
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // Version 1 of authenticaton routes 
 app.use("/api/v1/auth", authRouter)
+app.use("/api/v1/user", userRouter )
 
 app.get("/", (req,res)=> {
     res.send("Server is running")

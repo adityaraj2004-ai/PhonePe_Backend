@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
     },
     mpin: {
         type: String,
-        required: true,
+       
         select: false,
         maxlength: 4,
     },
@@ -54,9 +54,10 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true, })
 
 userSchema.pre("save", async function (next) {
-    if (this.isModified("password")) this.password = await bcrypt.hash(this.password, 10);
-    if (this.isModified("mpin")) this.mpin = await bcrypt.hash(this.mpin, 10);
-    next
+    if (!this.isModified("password")) return next;
+
+    this.password = await bcrypt.hash(this.password, 10);
+    next;
 })
 
 userSchema.methods.comparePasswords = async function (password) {
