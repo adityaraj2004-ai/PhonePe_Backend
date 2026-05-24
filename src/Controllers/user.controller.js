@@ -208,6 +208,11 @@ export const changePassword = asyncHandler(async (req, res) => {
 // 6. rotate refresh token
 // 7. logout-all-devices
 
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+    const incommingToken = req.cookies?.refreshToken;
+
+}
+)
 
 // ----------------------------------------------------------------------------------------
 
@@ -245,3 +250,9 @@ export const setMpin = asyncHandler(async (req, res) => {
         )
 
 })
+
+
+
+
+
+
